@@ -38,5 +38,10 @@ namespace Dialmon
                 // throw
             }
         }
+
+        private void connectionList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

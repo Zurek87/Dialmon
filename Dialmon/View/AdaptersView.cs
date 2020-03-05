@@ -13,6 +13,7 @@ namespace Dialmon.View
     {
         private static readonly string[] speedUnits = { "b/s", "kb/s", "Mb/s", "Gb/s", "Tb/s" };
         private static readonly string[] sizeUnits = { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
+        readonly Action<ListViewItem.ListViewSubItem, string> ifDiff = (x, y) => { if (x.Text != y) { x.Text = y; } };
 
         Adapters _aEngine;
         ListView _list;
@@ -33,7 +34,7 @@ namespace Dialmon.View
 
         private void UpdateAdaptersList()
         {
-
+            //_list.BeginUpdate();
             foreach (AdapterInterface adapter in _aEngine.AdapterList.Values)
             {
                 if (_listItems.ContainsKey(adapter.NetInterface.Id))
@@ -47,30 +48,31 @@ namespace Dialmon.View
                     _listItems[adapter.NetInterface.Id] = item;
                     _list.Items.Add(item);
                 }
-
             }
-
+            //_list.EndUpdate();
         }
 
         private void UpdateItem(ListViewItem item, NetworkInterface adapter)
         {
-            Action<ListViewItem.ListViewSubItem, string> ifDiff = (x, y) => { if (x.Text != y) { x.Text = y; } };
+            
             IPInterfaceStatistics ipStats = adapter.GetIPStatistics();
-            ifDiff(item.SubItems[0], adapter.Description);
-            ifDiff(item.SubItems[1], GetAdapterIP(adapter));
-            ifDiff(item.SubItems[2], GetAdapterMAC(adapter));
-            ifDiff(item.SubItems[3], GetAdapterType(adapter));
-            ifDiff(item.SubItems[4], FriendlyBits(adapter.Speed));
-            ifDiff(item.SubItems[5], GetAdapterStatus(adapter));
-            ifDiff(item.SubItems[6], FriendlyBits(ipStats.BytesReceived, false));
-            ifDiff(item.SubItems[7], FriendlyBits(ipStats.BytesSent, false));
-            ifDiff(item.SubItems[8], GetIpStatsErrorsCount(ipStats));
+            ifDiff(item.SubItems[0], adapter.Name);
+            ifDiff(item.SubItems[1], adapter.Description);
+            ifDiff(item.SubItems[2], GetAdapterIP(adapter));
+            ifDiff(item.SubItems[3], GetAdapterMAC(adapter));
+            ifDiff(item.SubItems[4], GetAdapterType(adapter));
+            ifDiff(item.SubItems[5], FriendlyBits(adapter.Speed));
+            ifDiff(item.SubItems[6], GetAdapterStatus(adapter));
+            ifDiff(item.SubItems[7], FriendlyBits(ipStats.BytesReceived, false));
+            ifDiff(item.SubItems[8], FriendlyBits(ipStats.BytesSent, false));
+            ifDiff(item.SubItems[9], GetIpStatsErrorsCount(ipStats));
         }
 
         private ListViewItem CreateItem(NetworkInterface adapter)
         {
-            ListViewItem item = new ListViewItem(adapter.Description);
+            ListViewItem item = new ListViewItem(adapter.Name);
             IPInterfaceStatistics ipStats = adapter.GetIPStatistics();
+            item.SubItems.Add(adapter.Description);
             item.SubItems.Add(GetAdapterIP(adapter));
             item.SubItems.Add(GetAdapterMAC(adapter));
             item.SubItems.Add(GetAdapterType(adapter));

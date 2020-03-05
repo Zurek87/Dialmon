@@ -36,7 +36,15 @@ namespace Dialmon.Dialmon
             set
             {
                 _process = value;
-                Icon = Icon.ExtractAssociatedIcon(_process.MainModule.FileName);
+                try
+                {
+                    Icon = Icon.ExtractAssociatedIcon(_process.MainModule.FileName);
+                }
+                catch (Exception)
+                {
+                    Icon = SystemIcons.Application;
+                }
+                
             }
         }
     }
@@ -51,6 +59,8 @@ namespace Dialmon.Dialmon
         public string LocalIP;
         public ConnectionStatus Status;
         public bool Archived;
+        public string ExeName; // exe file name or "System process" 
+        public string ExePath; // full path or "_ System - no access"
         public string Key
         {
             get

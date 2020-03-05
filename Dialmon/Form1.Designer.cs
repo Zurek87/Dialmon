@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.adaptersList = new System.Windows.Forms.ListView();
+            this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -39,11 +40,14 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.connectionList = new System.Windows.Forms.ListView();
+            this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -51,6 +55,7 @@
             // adaptersList
             // 
             this.adaptersList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader15,
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3,
@@ -66,10 +71,15 @@
             this.adaptersList.Location = new System.Drawing.Point(0, 0);
             this.adaptersList.Margin = new System.Windows.Forms.Padding(6);
             this.adaptersList.Name = "adaptersList";
-            this.adaptersList.Size = new System.Drawing.Size(960, 136);
+            this.adaptersList.Size = new System.Drawing.Size(1130, 136);
             this.adaptersList.TabIndex = 1;
             this.adaptersList.UseCompatibleStateImageBehavior = false;
             this.adaptersList.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader15
+            // 
+            this.columnHeader15.Text = "Name";
+            this.columnHeader15.Width = 170;
             // 
             // columnHeader1
             // 
@@ -122,18 +132,35 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.connectionList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader16,
+            this.columnHeader17,
             this.columnHeader8,
             this.columnHeader11,
             this.columnHeader13,
             this.columnHeader12,
-            this.columnHeader14});
+            this.columnHeader14,
+            this.columnHeader18});
+            this.connectionList.FullRowSelect = true;
             this.connectionList.HideSelection = false;
             this.connectionList.Location = new System.Drawing.Point(0, 145);
+            this.connectionList.MultiSelect = false;
             this.connectionList.Name = "connectionList";
-            this.connectionList.Size = new System.Drawing.Size(960, 222);
+            this.connectionList.Size = new System.Drawing.Size(1130, 222);
             this.connectionList.TabIndex = 2;
+            this.connectionList.TileSize = new System.Drawing.Size(100, 100);
             this.connectionList.UseCompatibleStateImageBehavior = false;
             this.connectionList.View = System.Windows.Forms.View.Details;
+            this.connectionList.SelectedIndexChanged += new System.EventHandler(this.connectionList_SelectedIndexChanged);
+            // 
+            // columnHeader16
+            // 
+            this.columnHeader16.Text = "";
+            this.columnHeader16.Width = 24;
+            // 
+            // columnHeader17
+            // 
+            this.columnHeader17.Text = "Name";
+            this.columnHeader17.Width = 169;
             // 
             // columnHeader8
             // 
@@ -145,17 +172,21 @@
             // 
             // columnHeader13
             // 
-            this.columnHeader13.DisplayIndex = 3;
             this.columnHeader13.Text = "Local IP";
             // 
             // columnHeader12
             // 
-            this.columnHeader12.DisplayIndex = 2;
             this.columnHeader12.Text = "Local Port";
             // 
             // columnHeader14
             // 
-            this.columnHeader14.Text = "Remote";
+            this.columnHeader14.Text = "Remote IP";
+            this.columnHeader14.Width = 103;
+            // 
+            // columnHeader18
+            // 
+            this.columnHeader18.Text = "Remote Port";
+            this.columnHeader18.Width = 85;
             // 
             // pictureBox1
             // 
@@ -164,7 +195,7 @@
             this.pictureBox1.BackColor = System.Drawing.Color.White;
             this.pictureBox1.Location = new System.Drawing.Point(12, 382);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(936, 163);
+            this.pictureBox1.Size = new System.Drawing.Size(1106, 163);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
@@ -172,12 +203,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(960, 557);
+            this.ClientSize = new System.Drawing.Size(1130, 557);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.connectionList);
             this.Controls.Add(this.adaptersList);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Dialmon";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
@@ -202,6 +233,10 @@
         private System.Windows.Forms.ColumnHeader columnHeader12;
         private System.Windows.Forms.ColumnHeader columnHeader14;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.ColumnHeader columnHeader15;
+        private System.Windows.Forms.ColumnHeader columnHeader16;
+        private System.Windows.Forms.ColumnHeader columnHeader17;
+        private System.Windows.Forms.ColumnHeader columnHeader18;
     }
 }
 
