@@ -124,17 +124,18 @@ namespace Dialmon.Dialmon
     [StructLayout(LayoutKind.Sequential)]
     struct MIB_TCPROW_OWNER_PID
     {
-        public uint state, localAddr;
+        public uint state;
+        public byte localAddr1, localAddr2, localAddr3, localAddr4;
         public byte localPort1, localPort2, localPort3, localPort4;
-        public uint remoteAddr;
+        public byte remoteAddr1, remoteAddr2, remoteAddr3, remoteAddr4;
         public byte remotePort1, remotePort2, remotePort3, remotePort4;
         public int Pid;
 
         public ushort LocalPort => BitConverter.ToUInt16(new byte[2] {localPort2, localPort1}, 0);
 
-        public string LocalIP => "not implemented";
+        public string LocalIP => String.Format("{0}.{1}.{2}.{3}", localAddr1, localAddr2, localAddr3, localAddr4);
         public ushort RemotePort => BitConverter.ToUInt16(new byte[2] {remotePort2, remotePort1}, 0);
-        public string RemoteIP => "not implemented";
+        public string RemoteIP => String.Format("{0}.{1}.{2}.{3}", remoteAddr1, remoteAddr2, remoteAddr3, remoteAddr4);
 
 
     }

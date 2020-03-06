@@ -86,6 +86,21 @@ namespace Dialmon.View
             }
             item.ImageKey = con.Pid.ToString();
             item.SubItems.Add(FirstToUpper(con.ExeName));
+            item.SubItems.Add(con.Pid.ToString());
+            item.SubItems.Add(con.Status.ToString());
+            item.SubItems.Add(con.LocalIP);
+            item.SubItems.Add(con.LocalPort.ToString());
+            if(con.Status != ConnectionStatus.listen)
+            {
+                item.SubItems.Add(con.RemoteIP);
+                item.SubItems.Add(con.RemotePort.ToString());
+            }
+            else
+            {
+                item.SubItems.Add("");
+                item.SubItems.Add("");
+            }
+
 
             return item;
         }
