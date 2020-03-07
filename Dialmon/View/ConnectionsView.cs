@@ -16,10 +16,9 @@ namespace Dialmon.View
         Connections _cEngine;
         ListView _list;
         IRunForm _form;
-        ImageList _images = new ImageList();
         Dictionary<string, ListViewItem> _listItems = new Dictionary<string, ListViewItem>();
-        Dictionary<string, ListViewGroup> _listGroups = new Dictionary<string, ListViewGroup>();
-        Queue<ListViewGroup> _newGroups = new Queue<ListViewGroup>();
+        
+       
         Processes _processList = new Processes();
         private Dictionary<String, Connection> _connections = new Dictionary<string, Connection>();
 
@@ -27,36 +26,18 @@ namespace Dialmon.View
         {
             _cEngine = cEngine;
             _list = list;
-            _list.SmallImageList = _images;
-            _list.LargeImageList = _images;
-            _images.ImageSize = new Size(20, 20);
-            _images.ColorDepth = ColorDepth.Depth32Bit;
             _form = form;
             _cEngine.OnUpdate += OnUpdateAdapters;
         }
 
-        public List<Connection> Connections
-        {
-            get
-            {
-                return _connections.Values.ToList();
-            }
-        }
+        public Processes Processes => _processList;
+
+        public List<Connection> Connections => _connections.Values.ToList();
 
         private void OnUpdateAdapters()
         {
             UpdateConnectionsList();
-            _form.RunInFormThread(UpdateListGroups);
             _form.RunInFormThread(_form.OnUpdateConnections);
-        }
-
-        private void UpdateListGroups()
-        {
-            while (_newGroups.Count > 0)
-            {
-                var group = _newGroups.Dequeue();
-                _list.Groups.Add(group);
-            }
         }
 
         private void UpdateConnectionsList()
@@ -92,14 +73,7 @@ namespace Dialmon.View
 
         }
 
-        private ListViewGroup GetOrCreateListViewGrop(string name)
-        {
-            if (_listGroups.Keys.Contains(name)) return _listGroups[name];
-            var group = new ListViewGroup(name);
-            _listGroups.Add(name, group);
-            _newGroups.Enqueue(group);
-            return group;
-        }
+
         private void CreateItem(ref Connection con)
         {
             ListViewItem item = new ListViewItem();
@@ -108,24 +82,12 @@ namespace Dialmon.View
                 var proc = _processList[con.Pid];
                 con.ExePath = proc.Process.MainModule.FileName;
                 con.ExeName = proc.Process.ProcessName;
-                if(!_images.Images.ContainsKey(proc.Pid.ToString()))
-                {
-                    if (proc.Icon != null)
-                    {
-                        _images.Images.Add(con.Pid.ToString(), proc.Icon);
-                    } 
-                    else
-                    {
-                        _images.Images.Add(con.Pid.ToString(), SystemIcons.Application);
-                    }
-                }
 
             }
             catch (Exception)
             {
                 con.ExeName = "System process";
                 con.ExePath = " System process no access";
-                _images.Images.Add(con.Pid.ToString(), SystemIcons.Application);
             }
             item.ImageKey = con.Pid.ToString();
             item.SubItems.Add(FirstToUpper(con.ExeName));
@@ -143,7 +105,7 @@ namespace Dialmon.View
                 item.SubItems.Add("");
                 item.SubItems.Add("");
             }
-            item.Group = GetOrCreateListViewGrop(con.ExePath);
+           // item.Group = GetOrCreateListViewGrop(con.ExePath);
 
             con.Item = item;
         }
