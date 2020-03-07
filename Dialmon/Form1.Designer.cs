@@ -49,6 +49,7 @@
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -71,7 +72,7 @@
             this.adaptersList.Location = new System.Drawing.Point(0, 0);
             this.adaptersList.Margin = new System.Windows.Forms.Padding(6);
             this.adaptersList.Name = "adaptersList";
-            this.adaptersList.Size = new System.Drawing.Size(1130, 136);
+            this.adaptersList.Size = new System.Drawing.Size(1156, 136);
             this.adaptersList.TabIndex = 1;
             this.adaptersList.UseCompatibleStateImageBehavior = false;
             this.adaptersList.View = System.Windows.Forms.View.Details;
@@ -141,11 +142,11 @@
             this.columnHeader14,
             this.columnHeader18});
             this.connectionList.FullRowSelect = true;
-            this.connectionList.HideSelection = false;
-            this.connectionList.Location = new System.Drawing.Point(0, 145);
+            this.connectionList.Location = new System.Drawing.Point(0, 172);
             this.connectionList.MultiSelect = false;
             this.connectionList.Name = "connectionList";
-            this.connectionList.Size = new System.Drawing.Size(1130, 222);
+            this.connectionList.Size = new System.Drawing.Size(1156, 242);
+            this.connectionList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.connectionList.TabIndex = 2;
             this.connectionList.TileSize = new System.Drawing.Size(100, 100);
             this.connectionList.UseCompatibleStateImageBehavior = false;
@@ -193,17 +194,26 @@
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BackColor = System.Drawing.Color.White;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 382);
+            this.pictureBox1.Location = new System.Drawing.Point(12, 429);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1106, 163);
+            this.pictureBox1.Size = new System.Drawing.Size(1132, 163);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(100, 145);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 4;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1130, 557);
+            this.ClientSize = new System.Drawing.Size(1156, 604);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.connectionList);
             this.Controls.Add(this.adaptersList);
@@ -237,6 +247,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader16;
         private System.Windows.Forms.ColumnHeader columnHeader17;
         private System.Windows.Forms.ColumnHeader columnHeader18;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

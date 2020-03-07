@@ -15,15 +15,17 @@ namespace Dialmon
     public partial class Form1 : Form, IRunForm
     {
         delegate void RunInFormThreadCallback();
+
         Adapters _aEngine;
         Connections _cEngine;
+        ConnectionsView _connectionView;
         public Form1(Adapters aEngine, Connections cEngine)
         {
             _aEngine = aEngine;
             _cEngine = cEngine;
             InitializeComponent();
             AdaptersView av = new AdaptersView(_aEngine,this, adaptersList);
-            ConnectionsView cv = new ConnectionsView(_cEngine, this, connectionList);
+           _connectionView = new ConnectionsView(_cEngine, this, connectionList);
         }
 
         public void RunInFormThread(Action action)
@@ -38,6 +40,24 @@ namespace Dialmon
                 // throw
             }
         }
+
+        public void OnUpdateConnections()
+        {
+            var connections = _connectionView.Connections;
+            var items = GetItemsFiltered(connections);
+            connectionList.Items.Clear();
+            connectionList.Items.AddRange(items);
+        }
+
+        private ListViewItem[] GetItemsFiltered(List<Connection> connections)
+        {
+            var items = connections.Where(c => c.Status == ConnectionStatus.listen);
+                
+                
+
+            return items.Select(c => c.Item).ToArray();
+        }
+    
 
         private void connectionList_SelectedIndexChanged(object sender, EventArgs e)
         {

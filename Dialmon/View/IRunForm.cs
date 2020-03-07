@@ -9,5 +9,6 @@ namespace Dialmon.View
     interface IRunForm
     {
         void RunInFormThread(Action action);
+        void OnUpdateConnections();
     }
 }

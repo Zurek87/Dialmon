@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Net.NetworkInformation;
+using System.Windows.Forms;
 
 namespace Dialmon.Dialmon
 {
@@ -61,6 +62,7 @@ namespace Dialmon.Dialmon
         public bool Archived;
         public string ExeName; // exe file name or "System process" 
         public string ExePath; // full path or "_ System - no access"
+        public ListViewItem Item;
         public string Key
         {
             get

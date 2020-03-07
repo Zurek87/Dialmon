@@ -18,7 +18,10 @@ namespace Dialmon.View
         IRunForm _form;
         ImageList _images = new ImageList();
         Dictionary<string, ListViewItem> _listItems = new Dictionary<string, ListViewItem>();
+        Dictionary<string, ListViewGroup> _listGroups = new Dictionary<string, ListViewGroup>();
+        Queue<ListViewGroup> _newGroups = new Queue<ListViewGroup>();
         Processes _processList = new Processes();
+        private Dictionary<String, Connection> _connections = new Dictionary<string, Connection>();
 
         public ConnectionsView(Connections cEngine, IRunForm form, ListView list)
         {
@@ -29,27 +32,58 @@ namespace Dialmon.View
             _images.ImageSize = new Size(20, 20);
             _images.ColorDepth = ColorDepth.Depth32Bit;
             _form = form;
-            _cEngine.OnUpdate += onUpdateAdapters;
+            _cEngine.OnUpdate += OnUpdateAdapters;
         }
 
-        private void onUpdateAdapters()
+        public List<Connection> Connections
         {
-            _form.RunInFormThread(UpdateConnectionsList);
+            get
+            {
+                return _connections.Values.ToList();
+            }
+        }
+
+        private void OnUpdateAdapters()
+        {
+            UpdateConnectionsList();
+            _form.RunInFormThread(UpdateListGroups);
+            _form.RunInFormThread(_form.OnUpdateConnections);
+        }
+
+        private void UpdateListGroups()
+        {
+            while (_newGroups.Count > 0)
+            {
+                var group = _newGroups.Dequeue();
+                _list.Groups.Add(group);
+            }
         }
 
         private void UpdateConnectionsList()
         {
-            foreach(var con in _cEngine.ConnectionList.Values)
+           
+            var list = _cEngine.ConnectionList;
+            for (var i = 0; i < list.Count(); i++)
             {
-                if (_listItems.ContainsKey(con.Key))
+                var con = _cEngine.ConnectionList[i];
+                if (_connections.ContainsKey(con.Key))
                 {
-                    UpdateItem(con);
+                    
+                    var knowCon = _connections[con.Key];
+                    knowCon.Archived = con.Archived;
+                    knowCon.Status = con.Status;
+                    _connections[knowCon.Key] = knowCon;
+                    UpdateItem(knowCon);
+                    //con.Item = _listItems[con.Key];
+                    //knowCon.Item.Group = GetOrCreateListViewGrop(knowCon.ExePath);
                 } 
                 else
                 {
-                    var item = CreateItem(con);
-                    AddItem(item, con);
+                    CreateItem(ref con);
+                    AddItem(con);
+                    _connections.Add(con.Key, con);
                 }
+                
             }
         }
 
@@ -57,7 +91,16 @@ namespace Dialmon.View
         {
 
         }
-        private ListViewItem CreateItem(Connection con)
+
+        private ListViewGroup GetOrCreateListViewGrop(string name)
+        {
+            if (_listGroups.Keys.Contains(name)) return _listGroups[name];
+            var group = new ListViewGroup(name);
+            _listGroups.Add(name, group);
+            _newGroups.Enqueue(group);
+            return group;
+        }
+        private void CreateItem(ref Connection con)
         {
             ListViewItem item = new ListViewItem();
             try
@@ -81,7 +124,7 @@ namespace Dialmon.View
             catch (Exception)
             {
                 con.ExeName = "System process";
-                con.ExePath = "_ System - no access";
+                con.ExePath = " System process no access";
                 _images.Images.Add(con.Pid.ToString(), SystemIcons.Application);
             }
             item.ImageKey = con.Pid.ToString();
@@ -100,19 +143,19 @@ namespace Dialmon.View
                 item.SubItems.Add("");
                 item.SubItems.Add("");
             }
+            item.Group = GetOrCreateListViewGrop(con.ExePath);
 
-
-            return item;
+            con.Item = item;
         }
 
         private void updateProcessInfo()
         {
 
         }
-        private void AddItem(ListViewItem item, Connection con)
+        private void AddItem(Connection con)
         {
-            _listItems.Add(con.Key, item);
-            _list.Items.Add(item);
+            _listItems.Add(con.Key, con.Item);
+            //_list.Items.Add(con.Item);
         }
 
         private string FirstToUpper(string input)
