@@ -50,7 +50,7 @@ namespace Dialmon.Dialmon
         }
     }
 
-    public struct Connection
+    public class Connection
     {
         private string _key;
         public int Pid;
@@ -63,6 +63,43 @@ namespace Dialmon.Dialmon
         public string ExeName; // exe file name or "System process" 
         public string ExePath; // full path or "_ System - no access"
         public ListViewItem Item;
+        public string Key
+        {
+            get
+            {
+                if (_key == null)
+                {
+                    _key = String.Format("{0}.{1}.{2}.{3}.{4}", Pid, LocalIP, LocalPort, RemoteIP, RemotePort);
+                }
+                return _key;
+            }
+        }
+
+        public Connection()
+        {
+
+        }
+        public Connection(ConnectionInfo ConnectionInfo)
+        {
+            Pid = ConnectionInfo.Pid;
+            RemoteIP = ConnectionInfo.RemoteIP;
+            RemotePort = ConnectionInfo.RemotePort;
+            LocalIP = ConnectionInfo.LocalIP;
+            LocalPort = ConnectionInfo.LocalPort;
+            Status = ConnectionInfo.Status;
+        }
+
+    }
+
+    public struct ConnectionInfo
+    {
+        private string _key;
+        public int Pid;
+        public string RemoteIP;
+        public ushort RemotePort;
+        public ushort LocalPort;
+        public string LocalIP;
+        public ConnectionStatus Status;
         public string Key
         {
             get

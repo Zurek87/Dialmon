@@ -10,9 +10,9 @@ namespace Dialmon.Dialmon
 {
     public class Connections : DialmonThread
     {
-        private Dictionary<String, Connection> _connections = new Dictionary<string, Connection>();
+        private Dictionary<String, ConnectionInfo> _connections = new Dictionary<string, ConnectionInfo>();
         public event OnUpdateDelegate OnUpdate;
-        public Connection[] ConnectionList { get { return _connections.Values.ToArray(); } }
+        public ConnectionInfo[] ConnectionList { get { return _connections.Values.ToArray(); } }
 
 
         [DllImport("iphlpapi.dll", SetLastError = true)]
@@ -20,6 +20,7 @@ namespace Dialmon.Dialmon
 
         protected override void UpdateThread()
         {
+            Thread.Sleep(_refreshTime/2);
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             while (_enabled)
@@ -40,17 +41,12 @@ namespace Dialmon.Dialmon
         private void UpdateConnections()
         {
             var conList = GetConnectionList();
-            foreach (var key in _connections.Keys)
-            {
-                var cc = _connections[key];
-                cc.Archived = true;
-            }
+
             foreach(var con in conList)
             {
                 if(_connections.ContainsKey(con.Key))
                 {
                     var oldCon = _connections[con.Key];
-                    oldCon.Archived = false;
                     oldCon.Status = con.Status;
                     _connections[con.Key] = oldCon;
                 } 
@@ -61,21 +57,21 @@ namespace Dialmon.Dialmon
             }
         }
 
-        private Connection[] GetConnectionList()
+        private ConnectionInfo[] GetConnectionList()
         {
             var rawConnections = GetAllTcpConnections();
-            var connections = new List<Connection>();
+            var connections = new List<ConnectionInfo>();
             foreach (var raw in rawConnections)
             {
-                connections.Add(ConnectionInfo(raw));
+                connections.Add(ConnectionInformation(raw));
             }
 
             return connections.ToArray();
         }
 
-        private Connection ConnectionInfo(MIB_TCPROW_OWNER_PID rawConection)
+        private ConnectionInfo ConnectionInformation(MIB_TCPROW_OWNER_PID rawConection)
         {
-            return new Connection()
+            return new ConnectionInfo()
             {
                 LocalPort = rawConection.LocalPort,
                 LocalIP = rawConection.LocalIP,

@@ -19,6 +19,7 @@ namespace Dialmon.Dialmon
 
         protected override void UpdateThread()
         {
+            Thread.Sleep(_refreshTime / 4);
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             while (_enabled)

@@ -142,6 +142,7 @@
             this.columnHeader14,
             this.columnHeader18});
             this.connectionList.FullRowSelect = true;
+            this.connectionList.HideSelection = false;
             this.connectionList.Location = new System.Drawing.Point(0, 172);
             this.connectionList.MultiSelect = false;
             this.connectionList.Name = "connectionList";

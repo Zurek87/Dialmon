@@ -1,5 +1,6 @@
 ﻿using Dialmon.Dialmon;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -14,67 +15,140 @@ namespace Dialmon.View
         readonly Action<ListViewItem.ListViewSubItem, string> ifDiff = (x, y) => { if (x.Text != y) { x.Text = y; } };
 
         Connections _cEngine;
-        ListView _list;
+        ListView _listView;
         IRunForm _form;
-        Dictionary<string, ListViewItem> _listItems = new Dictionary<string, ListViewItem>();
-        
-       
+
+        List<string> _itemsToShow = new List<string>();
+        ImageList _images = new ImageList();
+        Dictionary<string, ListViewGroup> _listGroups = new Dictionary<string, ListViewGroup>();
+        ConcurrentQueue<string> _newItems = new ConcurrentQueue<string>();
+        ConcurrentQueue<string> _newItemsInView = new ConcurrentQueue<string>();
+
         Processes _processList = new Processes();
         private Dictionary<String, Connection> _connections = new Dictionary<string, Connection>();
+        private bool _isFullAddNeed = true;
+        private bool _filters = false; // change only in form thread!
 
-        public ConnectionsView(Connections cEngine, IRunForm form, ListView list)
+        public ConnectionsView(Connections cEngine, IRunForm form, ListView listView)
         {
             _cEngine = cEngine;
-            _list = list;
+            _listView = listView;
             _form = form;
-            _cEngine.OnUpdate += OnUpdateAdapters;
+            _cEngine.OnUpdate += OnUpdateConnections;
+
+            _listView.SmallImageList = _images;
+            _listView.LargeImageList = _images;
+            _images.ImageSize = new Size(20, 20);
+            _images.ColorDepth = ColorDepth.Depth32Bit;
         }
 
-        public Processes Processes => _processList;
-
-        public List<Connection> Connections => _connections.Values.ToList();
-
-        private void OnUpdateAdapters()
+        private void OnUpdateConnections()
         {
             UpdateConnectionsList();
-            _form.RunInFormThread(_form.OnUpdateConnections);
+            _form.RunInFormThread(UpdateListView);
+            //
+        }
+        private void UpdateListView()
+        {
+            UpdateGroupInNew();
+            if (_isFullAddNeed)
+            {
+                _isFullAddNeed = false;
+                ResetViewConnections();
+            }
+            else
+            {
+                UpdateViewConnections();
+            }
+        }
+
+        private void ResetViewConnections()
+        {
+            _listView.Items.Clear();
+            ListViewItem[] items;
+            if(_filters)
+            {
+                items = _connections.Where(con => _itemsToShow.Contains(con.Key)).Select(con => con.Value.Item).ToArray();
+            } else
+            {
+                items = _connections.Select(con => con.Value.Item).ToArray();
+            }
+            _listView.Items.AddRange(items.ToArray());
+        }
+
+        private void UpdateViewConnections()
+        {
+            //
+            while (_newItemsInView.Count > 0)
+            {
+                string key;
+                if (_newItemsInView.TryDequeue(out key))
+                {
+                    var con = _connections[key];
+                    _listView.Items.Add(con.Item);
+                }
+            }
+        }
+
+        private void UpdateGroupInNew()
+        {
+            while(_newItems.Count > 0)
+            {
+                string key;
+                if(_newItems.TryDequeue(out key))
+                {
+                    var con = _connections[key];
+                    con.Item.Group = GetOrCreateGroup(con.ExePath);
+                    var proc = _processList[con.Pid];
+                    if (!_images.Images.ContainsKey(con.Pid.ToString()))
+                    {
+                        _images.Images.Add(con.Pid.ToString(), proc.Icon);
+                    }
+                }
+            }
+        }
+
+        private ListViewGroup GetOrCreateGroup(string name)
+        {
+            // try find
+            for(var i = 0; i<_listView.Groups.Count; i++)
+            {
+                var grp = _listView.Groups[i];
+                if (grp.Header == name) return grp;
+            }
+            var group = new ListViewGroup(name);
+            _listView.Groups.Add(group);
+            return group;
         }
 
         private void UpdateConnectionsList()
         {
-           
-            var list = _cEngine.ConnectionList;
-            for (var i = 0; i < list.Count(); i++)
+            var connectionInfos = _cEngine.ConnectionList;
+            foreach (var key in _connections.Keys)
             {
-                var con = _cEngine.ConnectionList[i];
-                if (_connections.ContainsKey(con.Key))
+                var con = _connections[key];
+                con.Archived = true;
+            }
+            foreach(var conInfo in connectionInfos)
+            {
+                if(_connections.ContainsKey(conInfo.Key))
                 {
-                    
-                    var knowCon = _connections[con.Key];
-                    knowCon.Archived = con.Archived;
-                    knowCon.Status = con.Status;
-                    _connections[knowCon.Key] = knowCon;
-                    UpdateItem(knowCon);
-                    //con.Item = _listItems[con.Key];
-                    //knowCon.Item.Group = GetOrCreateListViewGrop(knowCon.ExePath);
+                    var con = _connections[conInfo.Key];
+                    con.Archived = false;
+                    con.Status = conInfo.Status;
                 } 
                 else
                 {
-                    CreateItem(ref con);
-                    AddItem(con);
+                    var con = new Connection(conInfo);
+                    CreateItem(con);
+                    _newItems.Enqueue(con.Key);
+                    if(!_isFullAddNeed) _newItemsInView.Enqueue(con.Key); // filter !!
                     _connections.Add(con.Key, con);
                 }
-                
             }
         }
 
-        private void UpdateItem(Connection con)
-        {
-
-        }
-
-
-        private void CreateItem(ref Connection con)
+        private void CreateItem(Connection con)
         {
             ListViewItem item = new ListViewItem();
             try
@@ -105,19 +179,9 @@ namespace Dialmon.View
                 item.SubItems.Add("");
                 item.SubItems.Add("");
             }
-           // item.Group = GetOrCreateListViewGrop(con.ExePath);
+           // 
 
             con.Item = item;
-        }
-
-        private void updateProcessInfo()
-        {
-
-        }
-        private void AddItem(Connection con)
-        {
-            _listItems.Add(con.Key, con.Item);
-            //_list.Items.Add(con.Item);
         }
 
         private string FirstToUpper(string input)
