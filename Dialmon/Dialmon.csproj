@@ -78,6 +78,7 @@
     <Compile Include="View\AdaptersView.cs" />
     <Compile Include="View\ConnectionsView.cs" />
     <Compile Include="View\IRunForm.cs" />
+    <Compile Include="View\SpeedChart.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
