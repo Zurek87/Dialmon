@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -66,17 +67,19 @@ namespace Dialmon.View
         {
             List<Point> inData = new List<Point>();
             List<Point> outData = new List<Point>();
-            var rows = statistic.Rows;
-            var maxIn = rows.Max(x => x.BytesReceived)+1;
-            var maxOut = rows.Max(x => x.BytesSent)+1;
+            var rows = statistic.Rows.Reverse();
+            var maxIn = rows.Max(x => x.BytesReceived);
+            var maxOut = rows.Max(x => x.BytesSent);
+            var max = (maxIn > maxOut) ? maxIn : maxOut;
+            if (max < 1) max = 1;
             int i = 300;
             foreach (var row in rows)
             {
-                float wsIn = (float)row.BytesReceived / maxIn;
-                float wsOut = (float)row.BytesSent / maxOut;
-                int x = i * (int)(columnWidth / 10);
-                int yIn = (int)(wsIn * _size.Height);
-                int yOut = (int)(wsOut * _size.Height);
+                float wsIn = (float)row.BytesReceived / max;
+                float wsOut = (float)row.BytesSent / max;
+                int x = (int)(i * ((float)_size.Width / maxCount));
+                int yIn = _size.Height - (int)(wsIn * _size.Height);
+                int yOut = _size.Height - (int)(wsOut * _size.Height);
 
                 inData.Add(new Point(x, yIn));
                 outData.Add(new Point(x, yOut));
@@ -85,10 +88,11 @@ namespace Dialmon.View
             if (inData.Count < 2) return;
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                Pen pIn = new Pen(Color.FromArgb(123, 224, 123));
-                g.DrawCurve(pIn, inData.ToArray());
-                Pen pOut = new Pen(Color.FromArgb(224, 123, 123));
-                g.DrawCurve(pOut, outData.ToArray());
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                Pen pOut = new Pen(Color.FromArgb(224, 123, 123), 2);
+                g.DrawCurve(pOut, outData.ToArray(), 0.1f);
+                Pen pIn = new Pen(Color.FromArgb(125, 0, 255, 0), 2);
+                g.DrawCurve(pIn, inData.ToArray(), 0.1f);
             }
 
         }
@@ -120,6 +124,7 @@ namespace Dialmon.View
 
         private void Draw() // Run in form main thread!
         {
+            if (_boxSize.Width == 0) return;
             var bmp = new Bitmap(_boxSize.Width, _boxSize.Height);
             DrawChartBackLines(ref bmp);
             DrawChart(ref bmp);
