@@ -154,9 +154,15 @@ namespace Dialmon.View
             try
             {
                 var proc = _processList[con.Pid];
-                con.ExePath = proc.Process.MainModule.FileName;
-                con.ExeName = proc.Process.ProcessName;
-
+                if (proc.Pid >= 0)
+                {
+                    con.ExePath = proc.Process.MainModule.FileName;
+                    con.ExeName = proc.Process.ProcessName;
+                } else
+                {
+                    con.ExePath = "Process not found (probably close after short connection)";
+                    con.ExeName = "Not Found - Pid:" + con.Pid.ToString();
+                }
             }
             catch (Exception)
             {

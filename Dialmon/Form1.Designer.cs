@@ -220,6 +220,7 @@
             this.Controls.Add(this.adaptersList);
             this.Name = "Form1";
             this.Text = "Dialmon";
+            this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 

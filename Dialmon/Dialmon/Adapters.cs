@@ -46,14 +46,15 @@ namespace Dialmon.Dialmon
                 {
                     var netInter = _adapters[aId];
                     netInter.NetInterface = adapter;
-                    netInter.ActualV4Statistics = adapter.GetIPv4Statistics();
+                    netInter.ActualV4Statistics = adapter.GetIPStatistics();
+                    _adapters[aId] = netInter;
                 }
                 else
                 {
                     var netInter = new AdapterInterface
                     {
                         NetInterface = adapter,
-                        ActualV4Statistics = adapter.GetIPv4Statistics()
+                        ActualV4Statistics = adapter.GetIPStatistics()
                     };
                     _adapters.Add(aId, netInter);
                 }

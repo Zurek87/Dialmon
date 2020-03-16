@@ -1,6 +1,7 @@
 ﻿using Dialmon.Dialmon;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -11,9 +12,21 @@ namespace Dialmon.View
 {
     class SpeedChart
     {
+        const int maxCount = 300;
+        const int FrameBorder = 5;
+        int offset = 0;
+
         private IRunForm _form;
         private PictureBox _box;
+        private Size _boxSize;
+        private Size _size;
+        
+        private Bitmap _chart;
+        float rowHeight = 10;
+        float columnWidth = 10;
+
         Adapters _aEngine;
+        StatItem statistic = new StatItem();
         // ConcurrentQueue<>
 
         public SpeedChart(IRunForm form, Adapters aEngine, PictureBox box)
@@ -21,21 +34,98 @@ namespace Dialmon.View
             _form = form;
             _box = box;
             _aEngine = aEngine;
+            _aEngine.OnUpdate += OnStatsUpdate;
+            _form.ResizeEnd += OnFormResize;
+            _form.Resize += OnFormResize;
+            initChartBitmap();
         }
 
         private void OnStatsUpdate()
         {
-            var a =  _aEngine.AdapterList;
+            var aList =  _aEngine.AdapterList;
+            var s = aList.Select(ada => ada.Value.ActualV4Statistics).ToArray();
+            statistic.AddNewReading(s);
+            _form.RunInFormThread(Draw);
+        } 
+
+        private void OnFormResize(object sender, EventArgs e)
+        {
+            initChartBitmap();
+            Draw();
         }
 
-        private void CalculateStats() // Run in aEngine thread!
+        private void initChartBitmap()
         {
+            _size = new Size(_box.Size.Width - FrameBorder * 2, _box.Size.Height - FrameBorder * 2);
+            _boxSize = _box.Size;
+            rowHeight = (float)_size.Height / 10;
+            columnWidth = (float)_size.Width / (maxCount / 10);
+        }
 
-        } 
+        private void DrawChart(ref Bitmap bmp)
+        {
+            List<Point> inData = new List<Point>();
+            List<Point> outData = new List<Point>();
+            var rows = statistic.Rows;
+            var maxIn = rows.Max(x => x.BytesReceived)+1;
+            var maxOut = rows.Max(x => x.BytesSent)+1;
+            int i = 300;
+            foreach (var row in rows)
+            {
+                float wsIn = (float)row.BytesReceived / maxIn;
+                float wsOut = (float)row.BytesSent / maxOut;
+                int x = i * (int)(columnWidth / 10);
+                int yIn = (int)(wsIn * _size.Height);
+                int yOut = (int)(wsOut * _size.Height);
+
+                inData.Add(new Point(x, yIn));
+                outData.Add(new Point(x, yOut));
+                i--;
+            }
+            if (inData.Count < 2) return;
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                Pen pIn = new Pen(Color.FromArgb(123, 224, 123));
+                g.DrawCurve(pIn, inData.ToArray());
+                Pen pOut = new Pen(Color.FromArgb(224, 123, 123));
+                g.DrawCurve(pOut, outData.ToArray());
+            }
+
+        }
+        private void DrawChartBackLines(ref Bitmap bmp)
+        {
+            var numCols = (maxCount / 10);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                Pen p = new Pen(Color.FromArgb(224, 224, 224));
+
+                for (int y = 1; y < 10; ++y)
+                {
+                    g.DrawLine(p, FrameBorder, y * rowHeight + FrameBorder, _size.Width + FrameBorder, y * rowHeight + FrameBorder);
+                }/**/
+
+                for (int x = 1; x <= numCols + 1; ++x)
+                {
+                    if (x <= numCols || offset == 10)
+                    {
+                        var xx = ((float)x - (float)offset / 10) * columnWidth + FrameBorder;
+                        g.DrawLine(p, xx, FrameBorder, xx, _size.Height + FrameBorder );
+                    }
+
+                }
+            }
+            offset++;
+            if (offset > 10) offset = 1;
+        }
 
         private void Draw() // Run in form main thread!
         {
-
+            var bmp = new Bitmap(_boxSize.Width, _boxSize.Height);
+            DrawChartBackLines(ref bmp);
+            DrawChart(ref bmp);
+            _chart?.Dispose();
+            _chart = bmp;
+            _box.Image = _chart;
         }
   
     }
@@ -52,7 +142,7 @@ namespace Dialmon.View
                 return _rows.ToArray();
             }
         }
-        public void AddNewReading(IPv4InterfaceStatistics[] ipStats)
+        public void AddNewReading(IPInterfaceStatistics[] ipStats)
         {
             if (_rows == null) _rows = new Queue<StatRow>();
             long received = 0;
@@ -78,6 +168,8 @@ namespace Dialmon.View
             }
             _rows.Enqueue(row);
             _lastRow = row;
+
+            if (_rows.Count > 300) _rows.Dequeue();
         }
     }
     struct StatRow

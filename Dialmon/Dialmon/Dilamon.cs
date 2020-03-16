@@ -45,6 +45,7 @@ namespace Dialmon.Dialmon
                 {
                     Icon = SystemIcons.Application;
                 }
+                Pid = value.Id;
                 
             }
         }
@@ -114,20 +115,15 @@ namespace Dialmon.Dialmon
     }
     public struct AdapterInterface
     {
-        Queue<IPv4InterfaceStatistics> _ipV4Statistics;
-        IPv4InterfaceStatistics _actualV4Stat;
+        IPInterfaceStatistics _actualV4Stat;
 
         public NetworkInterface NetInterface;
-        public IPv4InterfaceStatistics[] IpV4Statistics { get { return _ipV4Statistics.ToArray(); } }
-        public IPv4InterfaceStatistics ActualV4Statistics
+        public IPInterfaceStatistics ActualV4Statistics
         {
             get { return _actualV4Stat; }
             set
             {
-                if (_ipV4Statistics == null) _ipV4Statistics = new Queue<IPv4InterfaceStatistics>();
                 _actualV4Stat = value;
-                _ipV4Statistics.Enqueue(value);
-                if (_ipV4Statistics.Count > 300) _ipV4Statistics.Dequeue();
             }
         }
     }

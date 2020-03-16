@@ -19,15 +19,16 @@ namespace Dialmon
         Adapters _aEngine;
         Connections _cEngine;
         ConnectionsView _connectionView;
+        SpeedChart _speedChart;
 
         public Form1(Adapters aEngine, Connections cEngine)
         {
             _aEngine = aEngine;
             _cEngine = cEngine;
             InitializeComponent();
-
             AdaptersView av = new AdaptersView(_aEngine,this, adaptersList);
            _connectionView = new ConnectionsView(_cEngine, this, connectionList);
+            _speedChart = new SpeedChart(this, _aEngine, pictureBox1);
         }
 
         public void RunInFormThread(Action action)
@@ -44,6 +45,11 @@ namespace Dialmon
         }
     
         private void connectionList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_ResizeEnd(object sender, EventArgs e)
         {
 
         }

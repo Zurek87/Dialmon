@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,12 +22,27 @@ namespace Dialmon.Dialmon
             get
             {
                 if (_processList.ContainsKey(pid)) return _processList[pid];
-                var process = Process.GetProcessById(pid);
-                var pinfo = new ProcessInfo()
+                Process process;
+                ProcessInfo pinfo;
+                try
                 {
-                    Process = process
-                };
-                _processList.Add(process.Id, pinfo);
+                    process = Process.GetProcessById(pid);
+                    pinfo = new ProcessInfo()
+                    {
+                        Process = process
+                    };
+                }
+                catch (ArgumentException)
+                {
+                    pinfo = new ProcessInfo()
+                    {
+                        Icon = SystemIcons.Error,
+                        Pid = -1
+
+                    };
+                }
+
+                _processList.Add(pid, pinfo);
                 return _processList[pid];
             }
         }

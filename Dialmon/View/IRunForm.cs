@@ -9,5 +9,7 @@ namespace Dialmon.View
     interface IRunForm
     {
         void RunInFormThread(Action action);
+        event EventHandler ResizeEnd;
+        event EventHandler Resize;
     }
 }
