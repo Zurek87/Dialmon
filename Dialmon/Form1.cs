@@ -53,5 +53,10 @@ namespace Dialmon
         {
 
         }
+
+        private void adaptersList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -50,7 +50,18 @@
             this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // adaptersList
@@ -66,16 +77,17 @@
             this.columnHeader6,
             this.columnHeader7,
             this.columnHeader10});
-            this.adaptersList.Dock = System.Windows.Forms.DockStyle.Top;
+            this.adaptersList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.adaptersList.FullRowSelect = true;
             this.adaptersList.HideSelection = false;
             this.adaptersList.Location = new System.Drawing.Point(0, 0);
             this.adaptersList.Margin = new System.Windows.Forms.Padding(6);
             this.adaptersList.Name = "adaptersList";
-            this.adaptersList.Size = new System.Drawing.Size(1156, 136);
+            this.adaptersList.Size = new System.Drawing.Size(1156, 112);
             this.adaptersList.TabIndex = 1;
             this.adaptersList.UseCompatibleStateImageBehavior = false;
             this.adaptersList.View = System.Windows.Forms.View.Details;
+            this.adaptersList.SelectedIndexChanged += new System.EventHandler(this.adaptersList_SelectedIndexChanged);
             // 
             // columnHeader15
             // 
@@ -143,10 +155,10 @@
             this.columnHeader18});
             this.connectionList.FullRowSelect = true;
             this.connectionList.HideSelection = false;
-            this.connectionList.Location = new System.Drawing.Point(0, 172);
+            this.connectionList.Location = new System.Drawing.Point(3, 32);
             this.connectionList.MultiSelect = false;
             this.connectionList.Name = "connectionList";
-            this.connectionList.Size = new System.Drawing.Size(1156, 242);
+            this.connectionList.Size = new System.Drawing.Size(1153, 307);
             this.connectionList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.connectionList.TabIndex = 2;
             this.connectionList.TileSize = new System.Drawing.Size(100, 100);
@@ -192,37 +204,90 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BackColor = System.Drawing.Color.White;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 429);
+            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1132, 163);
+            this.pictureBox1.Size = new System.Drawing.Size(1150, 114);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(100, 145);
+            this.comboBox1.Location = new System.Drawing.Point(12, 5);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.Size = new System.Drawing.Size(95, 21);
             this.comboBox1.TabIndex = 4;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Location = new System.Drawing.Point(0, 582);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1156, 22);
+            this.statusStrip1.TabIndex = 5;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.adaptersList);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Size = new System.Drawing.Size(1156, 582);
+            this.splitContainer1.SplitterDistance = 112;
+            this.splitContainer1.TabIndex = 6;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.comboBox1);
+            this.splitContainer2.Panel1.Controls.Add(this.connectionList);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.pictureBox1);
+            this.splitContainer2.Size = new System.Drawing.Size(1156, 466);
+            this.splitContainer2.SplitterDistance = 342;
+            this.splitContainer2.TabIndex = 0;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1156, 604);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.connectionList);
-            this.Controls.Add(this.adaptersList);
+            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.statusStrip1);
             this.Name = "Form1";
             this.Text = "Dialmon";
             this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -250,6 +315,9 @@
         private System.Windows.Forms.ColumnHeader columnHeader17;
         private System.Windows.Forms.ColumnHeader columnHeader18;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
     }
 }
 

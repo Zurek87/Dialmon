@@ -36,8 +36,7 @@ namespace Dialmon.View
             _box = box;
             _aEngine = aEngine;
             _aEngine.OnUpdate += OnStatsUpdate;
-            _form.ResizeEnd += OnFormResize;
-            _form.Resize += OnFormResize;
+            _box.SizeChanged += OnResize;
             initChartBitmap();
         }
 
@@ -49,7 +48,7 @@ namespace Dialmon.View
             _form.RunInFormThread(Draw);
         } 
 
-        private void OnFormResize(object sender, EventArgs e)
+        private void OnResize(object sender, EventArgs e)
         {
             initChartBitmap();
             Draw();
