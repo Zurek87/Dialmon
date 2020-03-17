@@ -88,6 +88,8 @@ namespace Dialmon.View
                     _listView.Items.Add(con.Item);
                 }
             }
+            var list = _connections.Where(con => con.Value.Archived).Select(con => con.Value).ToList();
+            list.ForEach(con => con.Item.ForeColor = Color.Brown);
         }
 
         private void UpdateGroupInNew()
@@ -124,10 +126,12 @@ namespace Dialmon.View
         private void UpdateConnectionsList()
         {
             var connectionInfos = _cEngine.ConnectionList;
-            foreach (var key in _connections.Keys)
+            var keys = _connections.Keys.ToArray();
+            foreach (var key in keys)
             {
                 var con = _connections[key];
                 con.Archived = true;
+                _connections[key] = con;
             }
             foreach(var conInfo in connectionInfos)
             {
@@ -136,6 +140,7 @@ namespace Dialmon.View
                     var con = _connections[conInfo.Key];
                     con.Archived = false;
                     con.Status = conInfo.Status;
+                    _connections[conInfo.Key] = con;
                 } 
                 else
                 {

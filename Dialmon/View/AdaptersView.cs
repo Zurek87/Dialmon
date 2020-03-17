@@ -54,8 +54,17 @@ namespace Dialmon.View
 
         private void UpdateItem(ListViewItem item, NetworkInterface adapter)
         {
-            
-            IPInterfaceStatistics ipStats = adapter.GetIPStatistics();
+            IPInterfaceStatistics ipStats;
+            try
+            {
+                ipStats = adapter.GetIPStatistics();
+            }
+            catch (Exception)
+            {
+                item.ForeColor = System.Drawing.Color.Brown;
+                return;
+            }
+
             ifDiff(item.SubItems[0], adapter.Name);
             ifDiff(item.SubItems[1], adapter.Description);
             ifDiff(item.SubItems[2], GetAdapterIP(adapter));

@@ -10,9 +10,9 @@ namespace Dialmon.Dialmon
 {
     public class Connections : DialmonThread
     {
-        private Dictionary<String, ConnectionInfo> _connections = new Dictionary<string, ConnectionInfo>();
+        private List<ConnectionInfo> _connections = new List<ConnectionInfo>();
         public event OnUpdateDelegate OnUpdate;
-        public ConnectionInfo[] ConnectionList { get { return _connections.Values.ToArray(); } }
+        public ConnectionInfo[] ConnectionList { get { return _connections.ToArray(); } }
 
 
         [DllImport("iphlpapi.dll", SetLastError = true)]
@@ -40,21 +40,7 @@ namespace Dialmon.Dialmon
 
         private void UpdateConnections()
         {
-            var conList = GetConnectionList();
-
-            foreach(var con in conList)
-            {
-                if(_connections.ContainsKey(con.Key))
-                {
-                    var oldCon = _connections[con.Key];
-                    oldCon.Status = con.Status;
-                    _connections[con.Key] = oldCon;
-                } 
-                else
-                {
-                    _connections[con.Key] = con;
-                }
-            }
+            _connections = GetConnectionList().ToList();
         }
 
         private ConnectionInfo[] GetConnectionList()
