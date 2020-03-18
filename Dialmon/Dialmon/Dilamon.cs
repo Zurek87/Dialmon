@@ -61,6 +61,7 @@ namespace Dialmon.Dialmon
         public string LocalIP;
         public ConnectionStatus Status;
         public bool Archived;
+        public DateTime LastUpdate;
         public string ExeName; // exe file name or "System process" 
         public string ExePath; // full path or "_ System - no access"
         public ListViewItem Item;

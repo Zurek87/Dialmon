@@ -75,6 +75,10 @@ namespace Dialmon.View
             ifDiff(item.SubItems[7], FriendlyBits(ipStats.BytesReceived, false));
             ifDiff(item.SubItems[8], FriendlyBits(ipStats.BytesSent, false));
             ifDiff(item.SubItems[9], GetIpStatsErrorsCount(ipStats));
+            if(item.ForeColor == System.Drawing.Color.Brown)
+            {
+                item.ForeColor = System.Drawing.Color.Black;
+            }
         }
 
         private ListViewItem CreateItem(NetworkInterface adapter)

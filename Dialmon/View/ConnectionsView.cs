@@ -90,6 +90,13 @@ namespace Dialmon.View
             }
             var list = _connections.Where(con => con.Value.Archived).Select(con => con.Value).ToList();
             list.ForEach(con => con.Item.ForeColor = Color.Brown);
+            var time = DateTime.Now.AddSeconds(-30);
+            var listToForget = _connections.Where(con => (con.Value.Archived && con.Value.LastUpdate < time )).Select(con => con.Value).ToList();
+            foreach(var con in listToForget)
+            {
+                con.Item.Remove();
+                _connections.Remove(con.Key);
+            }
         }
 
         private void UpdateGroupInNew()
@@ -130,7 +137,11 @@ namespace Dialmon.View
             foreach (var key in keys)
             {
                 var con = _connections[key];
+                if (con.Archived)
+                    continue;
+
                 con.Archived = true;
+                con.LastUpdate = DateTime.Now;
                 _connections[key] = con;
             }
             foreach(var conInfo in connectionInfos)
