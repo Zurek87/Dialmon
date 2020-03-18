@@ -13,6 +13,7 @@ namespace Dialmon.View
     class ConnectionsView
     {
         readonly Action<ListViewItem.ListViewSubItem, string> ifDiff = (x, y) => { if (x.Text != y) { x.Text = y; } };
+        public event OnUpdateDelegate OnUpdateGroup;
 
         Connections _cEngine;
         ListView _listView;
@@ -20,7 +21,7 @@ namespace Dialmon.View
 
         List<string> _itemsToShow = new List<string>();
         ImageList _images = new ImageList();
-        Dictionary<string, ListViewGroup> _listGroups = new Dictionary<string, ListViewGroup>();
+        HashSet<string> _listGroups = new HashSet<string>();
         ConcurrentQueue<string> _newItems = new ConcurrentQueue<string>();
         ConcurrentQueue<string> _newItemsInView = new ConcurrentQueue<string>();
 
@@ -28,6 +29,8 @@ namespace Dialmon.View
         private Dictionary<String, Connection> _connections = new Dictionary<string, Connection>();
         private bool _isFullAddNeed = true;
         private bool _filters = false; // change only in form thread!
+
+        public string[] Groups => _listGroups.ToArray();
 
         public ConnectionsView(Connections cEngine, IRunForm form, ListView listView)
         {
@@ -101,6 +104,7 @@ namespace Dialmon.View
 
         private void UpdateGroupInNew()
         {
+            bool newGroups = false;
             while(_newItems.Count > 0)
             {
                 string key;
@@ -113,8 +117,11 @@ namespace Dialmon.View
                     {
                         _images.Images.Add(con.Pid.ToString(), proc.Icon);
                     }
+                    newGroups |= _listGroups.Add(con.ExeName);
                 }
             }
+            if(newGroups)
+                OnUpdateGroup?.Invoke();
         }
 
         private ListViewGroup GetOrCreateGroup(string name)

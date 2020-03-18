@@ -29,6 +29,8 @@ namespace Dialmon
             AdaptersView av = new AdaptersView(_aEngine,this, adaptersList);
            _connectionView = new ConnectionsView(_cEngine, this, connectionList);
             _speedChart = new SpeedChart(this, _aEngine, pictureBox1);
+
+            _connectionView.OnUpdateGroup += GropsUpdated;
         }
 
         public void RunInFormThread(Action action)
@@ -42,6 +44,13 @@ namespace Dialmon
             {
                 // throw
             }
+        }
+
+        private void GropsUpdated()
+        {
+            var groups = _connectionView.Groups;
+            cbGroup.Items.Clear();
+            cbGroup.Items.AddRange(groups);
         }
     
         private void connectionList_SelectedIndexChanged(object sender, EventArgs e)
@@ -57,6 +66,28 @@ namespace Dialmon
         private void adaptersList_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                Hide();
+            }
+        }
+
+        private void notifyIcon1_Click(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                Show();
+                WindowState = FormWindowState.Normal;
+            } 
+            else
+            {
+                Hide();
+                WindowState = FormWindowState.Minimized;
+            }
         }
     }
 }
