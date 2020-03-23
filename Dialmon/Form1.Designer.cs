@@ -227,6 +227,8 @@
             this.cbGroup.Name = "cbGroup";
             this.cbGroup.Size = new System.Drawing.Size(174, 21);
             this.cbGroup.TabIndex = 4;
+            this.cbGroup.SelectedIndexChanged += new System.EventHandler(this.cbGroup_SelectedIndexChanged);
+            this.cbGroup.TextUpdate += new System.EventHandler(this.cbGroup_SelectedIndexChanged);
             // 
             // statusStrip1
             // 

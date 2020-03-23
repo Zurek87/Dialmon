@@ -48,9 +48,12 @@ namespace Dialmon
 
         private void GropsUpdated()
         {
-            var groups = _connectionView.Groups;
-            cbGroup.Items.Clear();
-            cbGroup.Items.AddRange(groups);
+            RunInFormThread(() => {
+                var groups = _connectionView.Groups;
+                cbGroup.Items.Clear();
+                cbGroup.Items.AddRange(groups);
+            });
+            
         }
     
         private void connectionList_SelectedIndexChanged(object sender, EventArgs e)
@@ -88,6 +91,11 @@ namespace Dialmon
                 Hide();
                 WindowState = FormWindowState.Minimized;
             }
+        }
+
+        private void cbGroup_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _connectionView.Filters.GroupName = cbGroup.Text;
         }
     }
 }

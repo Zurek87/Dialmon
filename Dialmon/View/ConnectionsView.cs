@@ -22,15 +22,15 @@ namespace Dialmon.View
         List<string> _itemsToShow = new List<string>();
         ImageList _images = new ImageList();
         HashSet<string> _listGroups = new HashSet<string>();
-        ConcurrentQueue<string> _newItems = new ConcurrentQueue<string>();
-        ConcurrentQueue<string> _newItemsInView = new ConcurrentQueue<string>();
 
         Processes _processList = new Processes();
         private Dictionary<String, Connection> _connections = new Dictionary<string, Connection>();
         private bool _isFullAddNeed = true;
-        private bool _filters = false; // change only in form thread!
+        private bool _groupsUpdated = true;
 
         public string[] Groups => _listGroups.ToArray();
+
+        public ConnectionFilters Filters;
 
         public ConnectionsView(Connections cEngine, IRunForm form, ListView listView)
         {
@@ -48,12 +48,17 @@ namespace Dialmon.View
         private void OnUpdateConnections()
         {
             UpdateConnectionsList();
+            if(_groupsUpdated)
+            {
+                OnUpdateGroup?.Invoke();
+                _groupsUpdated = false;
+            }
+            FilterItems();
             _form.RunInFormThread(UpdateListView);
             //
         }
         private void UpdateListView()
         {
-            UpdateGroupInNew();
             if (_isFullAddNeed)
             {
                 _isFullAddNeed = false;
@@ -65,63 +70,67 @@ namespace Dialmon.View
             }
         }
 
+        private void FilterItems()
+        {
+            var conn = _connections.Select(con => con.Value);
+            if (!String.IsNullOrWhiteSpace(Filters.GroupName)) conn = conn.Where(con => con.ExeName.Contains(Filters.GroupName));
+
+            var keys = conn.Select(con => con.Key).ToList();
+            foreach (var key in keys)
+            {
+                var con = _connections[key];
+                con.Visible = true;
+                _connections[key] = con;
+            }
+        }
+
         private void ResetViewConnections()
         {
             _listView.Items.Clear();
-            ListViewItem[] items;
-            if(_filters)
-            {
-                items = _connections.Where(con => _itemsToShow.Contains(con.Key)).Select(con => con.Value.Item).ToArray();
-            } else
-            {
-                items = _connections.Select(con => con.Value.Item).ToArray();
-            }
-            _listView.Items.AddRange(items.ToArray());
+            _connections.Select(con => con.Value).ToList().ForEach(con => BeforeItemAdd(con));
+            _listView.Items.AddRange(_connections.Where(con => con.Value.Visible).Select(con => con.Value.Item).ToArray());
         }
 
         private void UpdateViewConnections()
         {
             //
-            while (_newItemsInView.Count > 0)
-            {
-                string key;
-                if (_newItemsInView.TryDequeue(out key))
-                {
-                    var con = _connections[key];
-                    _listView.Items.Add(con.Item);
-                }
-            }
+
             var list = _connections.Where(con => con.Value.Archived).Select(con => con.Value).ToList();
             list.ForEach(con => con.Item.ForeColor = Color.Brown);
             var time = DateTime.Now.AddSeconds(-30);
-            var listToForget = _connections.Where(con => (con.Value.Archived && con.Value.LastUpdate < time )).Select(con => con.Value).ToList();
-            foreach(var con in listToForget)
+            var listToForget = _connections.Where(con => (con.Value.Archived && con.Value.LastUpdate < time)).Select(con => con.Value).ToList();
+            foreach (var con in listToForget)
             {
                 con.Item.Remove();
                 _connections.Remove(con.Key);
             }
-        }
 
-        private void UpdateGroupInNew()
-        {
-            bool newGroups = false;
-            while(_newItems.Count > 0)
+            var listToHide = _connections.Where(con => (!con.Value.Visible)).Select(con => con.Value).ToList();
+            foreach (var con in listToHide)
             {
-                string key;
-                if(_newItems.TryDequeue(out key))
+                con.Item.ListView?.Items.Remove(con.Item);
+            }
+            var listToShow = _connections.Where(con => (con.Value.Visible)).Select(con => con.Value).ToList();
+            foreach (var con in listToShow)
+            {
+                BeforeItemAdd(con);
+                if (con.Item.ListView == null)
                 {
-                    var con = _connections[key];
-                    con.Item.Group = GetOrCreateGroup(con.ExePath);
-                    var proc = _processList[con.Pid];
-                    if (!_images.Images.ContainsKey(con.Pid.ToString()))
-                    {
-                        _images.Images.Add(con.Pid.ToString(), proc.Icon);
-                    }
-                    newGroups |= _listGroups.Add(con.ExeName);
+                    _listView.Items.Add(con.Item);
+                    
                 }
             }
-            if(newGroups)
-                OnUpdateGroup?.Invoke();
+        }
+
+        private void BeforeItemAdd(Connection con) //run in form thread
+        {
+            var proc = _processList[con.Pid];
+            if (!_images.Images.ContainsKey(con.Pid.ToString()))
+            {
+                _images.Images.Add(con.Pid.ToString(), proc.Icon);
+            }
+            _listGroups.Add(con.ExeName);
+            con.Item.Group = GetOrCreateGroup(con.ExePath);
         }
 
         private ListViewGroup GetOrCreateGroup(string name)
@@ -134,6 +143,7 @@ namespace Dialmon.View
             }
             var group = new ListViewGroup(name);
             _listView.Groups.Add(group);
+            _groupsUpdated = true;
             return group;
         }
 
@@ -148,6 +158,7 @@ namespace Dialmon.View
                     continue;
 
                 con.Archived = true;
+                con.Visible = false;
                 con.LastUpdate = DateTime.Now;
                 _connections[key] = con;
             }
@@ -164,8 +175,7 @@ namespace Dialmon.View
                 {
                     var con = new Connection(conInfo);
                     CreateItem(con);
-                    _newItems.Enqueue(con.Key);
-                    if(!_isFullAddNeed) _newItemsInView.Enqueue(con.Key); // filter !!
+                    //con.Item.Group = GetOrCreateGroup(con.ExePath);
                     _connections.Add(con.Key, con);
                 }
             }

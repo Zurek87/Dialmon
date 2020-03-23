@@ -26,6 +26,15 @@ namespace Dialmon.Dialmon
         delete_tcb,// MIB_TCP_STATE_DELETE_TCB
     }
 
+    public struct ConnectionFilters
+    {
+        public string GroupName;
+        public string IpFilter;
+        public string PortFilter;
+        public ConnectionStatus[] statuses;
+        public long archivedTime;
+    }
+
     public struct ProcessInfo
     {
         private Process _process;
@@ -54,6 +63,7 @@ namespace Dialmon.Dialmon
     public class Connection
     {
         private string _key;
+        public ListViewItem _item;
         public int Pid;
         public string RemoteIP;
         public ushort RemotePort;
@@ -61,10 +71,19 @@ namespace Dialmon.Dialmon
         public string LocalIP;
         public ConnectionStatus Status;
         public bool Archived;
+        public bool Visible;
         public DateTime LastUpdate;
         public string ExeName; // exe file name or "System process" 
         public string ExePath; // full path or "_ System - no access"
-        public ListViewItem Item;
+
+        public ListViewItem Item 
+        {
+            get { return _item; }
+            set {
+                _item = value;
+                Visible = false;
+            }
+        }
         public string Key
         {
             get
