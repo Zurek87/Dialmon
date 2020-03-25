@@ -73,8 +73,26 @@ namespace Dialmon.View
         private void FilterItems()
         {
             var conn = _connections.Select(con => con.Value);
-            if (!String.IsNullOrWhiteSpace(Filters.GroupName)) conn = conn.Where(con => con.ExeName.Contains(Filters.GroupName));
-
+            if (!String.IsNullOrWhiteSpace(Filters.GroupName))
+            {
+                var name = Filters.GroupName.ToLower();
+                conn = conn.Where(con => con.ExeName.ToLower().Contains(name));
+            }
+            if (!String.IsNullOrWhiteSpace(Filters.PortFilter))
+            {
+                conn = conn.Where(con =>
+                        con.LocalPort.ToString().Contains(Filters.PortFilter)
+                        || (con.Status != ConnectionStatus.listen && con.RemotePort.ToString().Contains(Filters.PortFilter))
+                       
+                    );
+            }
+            if (!String.IsNullOrWhiteSpace(Filters.IpFilter))
+            {
+                conn = conn.Where(con =>
+                        con.LocalIP.ToString().Contains(Filters.IpFilter)
+                        || (con.Status != ConnectionStatus.listen && con.RemoteIP.ToString().Contains(Filters.IpFilter))
+                    );
+            }
             var keys = conn.Select(con => con.Key).ToList();
             foreach (var key in keys)
             {
@@ -129,7 +147,7 @@ namespace Dialmon.View
             {
                 _images.Images.Add(con.Pid.ToString(), proc.Icon);
             }
-            _listGroups.Add(con.ExeName);
+            _listGroups.Add(FirstToUpper(con.ExeName));
             con.Item.Group = GetOrCreateGroup(con.ExePath);
         }
 

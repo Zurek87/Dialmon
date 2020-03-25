@@ -55,12 +55,12 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtBoxPort = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.txtBoxIP = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -163,10 +163,10 @@
             this.columnHeader18});
             this.connectionList.FullRowSelect = true;
             this.connectionList.HideSelection = false;
-            this.connectionList.Location = new System.Drawing.Point(3, 32);
+            this.connectionList.Location = new System.Drawing.Point(0, 32);
             this.connectionList.MultiSelect = false;
             this.connectionList.Name = "connectionList";
-            this.connectionList.Size = new System.Drawing.Size(1153, 307);
+            this.connectionList.Size = new System.Drawing.Size(1156, 307);
             this.connectionList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.connectionList.TabIndex = 2;
             this.connectionList.TileSize = new System.Drawing.Size(100, 100);
@@ -270,9 +270,9 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.textBox2);
+            this.splitContainer2.Panel1.Controls.Add(this.txtBoxPort);
             this.splitContainer2.Panel1.Controls.Add(this.label3);
-            this.splitContainer2.Panel1.Controls.Add(this.textBox1);
+            this.splitContainer2.Panel1.Controls.Add(this.txtBoxIP);
             this.splitContainer2.Panel1.Controls.Add(this.label2);
             this.splitContainer2.Panel1.Controls.Add(this.label1);
             this.splitContainer2.Panel1.Controls.Add(this.cbGroup);
@@ -285,37 +285,13 @@
             this.splitContainer2.SplitterDistance = 342;
             this.splitContainer2.TabIndex = 0;
             // 
-            // notifyIcon1
+            // txtBoxPort
             // 
-            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "Dialmon";
-            this.notifyIcon1.Visible = true;
-            this.notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(196, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(20, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "IP:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(38, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Name:";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(217, 6);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 7;
+            this.txtBoxPort.Location = new System.Drawing.Point(365, 6);
+            this.txtBoxPort.Name = "txtBoxPort";
+            this.txtBoxPort.Size = new System.Drawing.Size(100, 20);
+            this.txtBoxPort.TabIndex = 9;
+            this.txtBoxPort.TextChanged += new System.EventHandler(this.txtBoxPort_TextChanged);
             // 
             // label3
             // 
@@ -326,12 +302,38 @@
             this.label3.TabIndex = 8;
             this.label3.Text = "Port:";
             // 
-            // textBox2
+            // txtBoxIP
             // 
-            this.textBox2.Location = new System.Drawing.Point(365, 6);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 9;
+            this.txtBoxIP.Location = new System.Drawing.Point(217, 6);
+            this.txtBoxIP.Name = "txtBoxIP";
+            this.txtBoxIP.Size = new System.Drawing.Size(100, 20);
+            this.txtBoxIP.TabIndex = 7;
+            this.txtBoxIP.TextChanged += new System.EventHandler(this.txtBoxIP_TextChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(38, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Name:";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(196, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(20, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "IP:";
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "Dialmon";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);
             // 
             // Form1
             // 
@@ -388,9 +390,9 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txtBoxPort;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtBoxIP;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
     }

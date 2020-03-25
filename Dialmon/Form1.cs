@@ -97,5 +97,15 @@ namespace Dialmon
         {
             _connectionView.Filters.GroupName = cbGroup.Text;
         }
+
+        private void txtBoxIP_TextChanged(object sender, EventArgs e)
+        {
+            _connectionView.Filters.IpFilter = txtBoxIP.Text;
+        }
+
+        private void txtBoxPort_TextChanged(object sender, EventArgs e)
+        {
+            _connectionView.Filters.PortFilter = txtBoxPort.Text;
+        }
     }
 }
